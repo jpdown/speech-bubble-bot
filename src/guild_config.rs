@@ -14,7 +14,7 @@ pub async fn chance(ctx: Context<'_>, chance: u32) -> Result<(), Error> {
     db.set_guild_chance(ctx.guild_id().unwrap().into(), chance)
         .await?;
 
-    ctx.say("response chance set").await?;
+    ctx.say(format!("Response chance set to {}%", chance * 100.0)).await?;
 
     Ok(())
 }
@@ -27,9 +27,13 @@ pub async fn chance(ctx: Context<'_>, chance: u32) -> Result<(), Error> {
 )]
 pub async fn add(ctx: Context<'_>, url: String) -> Result<(), Error> {
     let db = crate::database::DbConn::new().await;
-    db.add_image(ctx.guild_id().unwrap().into(), url).await?;
+    let res = db.add_image(ctx.guild_id().unwrap().into(), url).await?;
 
-    ctx.say("url added").await?;
+    if res {
+        ctx.say("url added").await?;
+    } else {
+        ctx.say("url already exists").await?;
+    }
 
     Ok(())
 }
@@ -42,9 +46,13 @@ pub async fn add(ctx: Context<'_>, url: String) -> Result<(), Error> {
 )]
 pub async fn remove(ctx: Context<'_>, url: String) -> Result<(), Error> {
     let db = crate::database::DbConn::new().await;
-    db.remove_image(ctx.guild_id().unwrap().into(), url).await?;
+    let res = db.remove_image(ctx.guild_id().unwrap().into(), url).await?;
 
-    ctx.say("url removed").await?;
+    if res > 0 {
+        ctx.say("url removed").await?;
+    } else {
+        ctx.say("url does not exist").await?;
+    }
 
     Ok(())
 }

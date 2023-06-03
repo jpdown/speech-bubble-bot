@@ -47,7 +47,7 @@ impl DbConn {
         Ok(())
     }
 
-    pub async fn get_image(&self, guild: i64) -> Result<Option<String>, DbErr> {
+    pub async fn get_random_image(&self, guild: i64) -> Result<Option<String>, DbErr> {
         let images = ResponseImages::find()
             .filter(response_images::Column::GuildId.eq(guild))
             .all(&self.client)
@@ -61,7 +61,7 @@ impl DbConn {
         }
     }
 
-    pub async fn add_image(&self, guild: i64, url: String) -> Result<(), DbErr> {
+    pub async fn add_image(&self, guild: i64, url: String) -> Result<bool, DbErr> {
         let response_image = response_images::ActiveModel {
             guild_id: ActiveValue::Set(guild),
             url: ActiveValue::Set(url.clone()),
@@ -75,23 +75,23 @@ impl DbConn {
             .await?;
 
         if img.is_some() {
-            return Ok(());
+            return Ok(false);
         }
 
         ResponseImages::insert(response_image)
             .exec(&self.client)
             .await?;
 
-        Ok(())
+        Ok(true)
     }
 
-    pub async fn remove_image(&self, guild: i64, url: String) -> Result<(), DbErr> {
+    pub async fn remove_image(&self, guild: i64, url: String) -> Result<u64, DbErr> {
         let res = response_images::Entity::delete_many()
             .filter(response_images::Column::GuildId.eq(guild))
             .filter(response_images::Column::Url.eq(url))
             .exec(&self.client)
             .await?;
 
-        Ok(())
+        Ok(res.rows_affected)
     }
 }

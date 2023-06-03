@@ -34,7 +34,7 @@ pub async fn on_message(_ctx: Context, _new_message: Message) {
         return;
     }
 
-    let image = db.get_image(guild_id.into()).await;
+    let image = db.get_random_image(guild_id.into()).await;
 
     match image {
         Ok(img) => match img {
