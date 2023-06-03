@@ -1,4 +1,5 @@
 use crate::{Context, Error};
+use serenity::model::prelude::User;
 
 /// Displays your or another user's account creation date
 #[poise::command(slash_command, prefix_command)]

@@ -45,7 +45,11 @@ impl serenity::EventHandler for Handler {
 async fn main() {
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            commands: vec![commands::age(), commands::help()],
+            commands: vec![
+                commands::age(),
+                commands::help(),
+                guild_config::set_chance(),
+            ],
             prefix_options: poise::PrefixFrameworkOptions {
                 prefix: Some(";".into()),
                 edit_tracker: Some(poise::EditTracker::for_timespan(Duration::from_secs(3600))),
