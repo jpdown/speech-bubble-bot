@@ -25,9 +25,11 @@ pub async fn help(
         ctx,
         command.as_deref(),
         poise::builtins::HelpConfiguration {
-            extra_text_at_bottom: "This is an example bot made to showcase features of my custom Discord bot framework",
+            ephemeral: true,
+            extra_text_at_bottom: "I exist to call people out when they say something dumb",
             ..Default::default()
         },
-    ).await?;
+    )
+    .await?;
     Ok(())
 }
