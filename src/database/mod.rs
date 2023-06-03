@@ -2,13 +2,12 @@ pub mod entities;
 
 use self::entities::*;
 use crate::database::entities::prelude::{GuildConfig, ResponseImages};
-use crate::database::entities::response_images::ActiveModel;
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
-use sea_orm::sea_query::{Expr, Func, OnConflict, Query, SimpleExpr};
+use sea_orm::sea_query::{OnConflict};
 use sea_orm::*;
-use std::time::Duration;
-use sea_orm::sea_query::ConditionExpression::Condition;
+
+
 
 const DEFAULT_DATABASE_URL: &str = "sqlite:./data/sqlite.db";
 

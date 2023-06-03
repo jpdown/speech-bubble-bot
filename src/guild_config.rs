@@ -1,5 +1,4 @@
-use crate::{guild_config, Context, Error};
-use serenity::model::prelude::User;
+use crate::{Context, Error};
 
 #[poise::command(
     prefix_command,
