@@ -1,8 +1,10 @@
+mod commands;
+
 use poise::serenity_prelude as serenity;
 use std::time::Duration;
 
 // Custom user data passed to all command functions
-struct Data {}
+pub struct Data {}
 
 // All command functions use these types
 type Error = Box<dyn std::error::Error + Send + Sync>;
@@ -25,23 +27,11 @@ async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
     }
 }
 
-/// Displays your or another user's account creation date
-#[poise::command(slash_command, prefix_command)]
-async fn age(
-    ctx: Context<'_>,
-    #[description = "Selected user"] user: Option<serenity::User>,
-) -> Result<(), Error> {
-    let u = user.as_ref().unwrap_or_else(|| ctx.author());
-    let response = format!("{}'s account was created at {}", u.name, u.created_at());
-    ctx.say(response).await?;
-    Ok(())
-}
-
 #[tokio::main]
 async fn main() {
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            commands: vec![age()],
+            commands: vec![commands::age(), commands::help()],
             prefix_options: poise::PrefixFrameworkOptions {
                 prefix: Some(";".into()),
                 edit_tracker: Some(poise::EditTracker::for_timespan(Duration::from_secs(3600))),
