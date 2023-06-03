@@ -7,9 +7,7 @@ use rand::thread_rng;
 use sea_orm::sea_query::{OnConflict};
 use sea_orm::*;
 
-
-
-const DEFAULT_DATABASE_URL: &str = "sqlite:./data/sqlite.db";
+const DEFAULT_DATA_DIR: &str = "./data";
 
 pub struct DbConn {
     pub client: DatabaseConnection,
@@ -17,8 +15,13 @@ pub struct DbConn {
 
 impl DbConn {
     pub async fn new() -> Self {
+        let data_dir =  match std::env::var("DATA_DIR") {
+            Ok(dir) => dir,
+            _ => DEFAULT_DATA_DIR.into(),
+        };
+
         Self {
-            client: Database::connect(DEFAULT_DATABASE_URL)
+            client: Database::connect(format!("sqlite:{}/sqlite.db", data_dir))
                 .await
                 .expect("uh oh"),
         }
