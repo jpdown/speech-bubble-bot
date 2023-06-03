@@ -8,6 +8,7 @@ use rand::thread_rng;
 use sea_orm::sea_query::{Expr, Func, OnConflict, Query, SimpleExpr};
 use sea_orm::*;
 use std::time::Duration;
+use sea_orm::sea_query::ConditionExpression::Condition;
 
 const DEFAULT_DATABASE_URL: &str = "sqlite:./data/sqlite.db";
 
@@ -62,21 +63,21 @@ impl DbConn {
     }
 
     pub async fn add_image(&self, guild: i64, url: String) -> Result<bool, DbErr> {
-        let response_image = response_images::ActiveModel {
-            guild_id: ActiveValue::Set(guild),
-            url: ActiveValue::Set(url.clone()),
-            ..Default::default()
-        };
-
         let img = ResponseImages::find()
             .filter(response_images::Column::GuildId.eq(guild))
-            .filter(response_images::Column::Url.eq(url))
+            .filter(response_images::Column::Url.eq(&url))
             .one(&self.client)
             .await?;
 
         if img.is_some() {
             return Ok(false);
         }
+
+        let response_image = response_images::ActiveModel {
+            guild_id: ActiveValue::Set(guild),
+            url: ActiveValue::Set(url),
+            ..Default::default()
+        };
 
         ResponseImages::insert(response_image)
             .exec(&self.client)
