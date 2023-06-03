@@ -1,6 +1,8 @@
 mod commands;
+mod responder;
 
-use poise::serenity_prelude as serenity;
+use poise::serenity_prelude::Message;
+use poise::{async_trait, serenity_prelude as serenity};
 use std::time::Duration;
 
 // Custom user data passed to all command functions
@@ -27,6 +29,15 @@ async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
     }
 }
 
+struct Handler;
+
+#[async_trait]
+impl serenity::EventHandler for Handler {
+    async fn message(&self, _ctx: serenity::Context, _new_message: Message) {
+        responder::on_message(_ctx, _new_message).await;
+    }
+}
+
 #[tokio::main]
 async fn main() {
     let framework = poise::Framework::builder()
@@ -44,6 +55,7 @@ async fn main() {
         .intents(
             serenity::GatewayIntents::non_privileged() | serenity::GatewayIntents::MESSAGE_CONTENT,
         )
+        .client_settings(|client| client.event_handler(Handler))
         .setup(|ctx, _ready, framework| {
             Box::pin(async move {
                 println!(

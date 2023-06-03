@@ -1039,6 +1039,7 @@ name = "speech-bubble-bot"
 version = "0.1.0"
 dependencies = [
  "poise",
+ "rand",
  "serenity",
  "tokio",
 ]
