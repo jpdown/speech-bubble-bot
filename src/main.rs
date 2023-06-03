@@ -1,4 +1,5 @@
 mod commands;
+mod guild_config;
 mod responder;
 
 use poise::serenity_prelude::Message;
