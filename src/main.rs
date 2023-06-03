@@ -1,4 +1,6 @@
 mod commands;
+mod database;
+mod db;
 mod guild_config;
 mod responder;
 
