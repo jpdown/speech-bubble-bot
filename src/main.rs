@@ -22,6 +22,7 @@ async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
         poise::FrameworkError::Setup { error, .. } => panic!("Failed to start bot: {:?}", error),
         poise::FrameworkError::Command { error, ctx } => {
             println!("Error in command `{}`: {:?}", ctx.command().name, error,);
+            let _ = ctx.say("Error running command. Why did you do that??").await;
         }
         error => {
             if let Err(e) = poise::builtins::on_error(error).await {
