@@ -30,10 +30,22 @@ pub async fn on_message(_ctx: Context, _new_message: Message) {
     };
 
     let respond_rng: f64 = random();
-    if respond_rng < guild_config.response_chance {
-        match _new_message.reply(_ctx.http, "lmao").await {
-            Ok(..) => {}
-            Err(e) => println!("Error responding to message: {}", e),
-        };
+    if respond_rng >= guild_config.response_chance {
+        return;
     }
+
+    let image = db.get_image(guild_id.into()).await;
+
+    match image {
+        Ok(img) => match img {
+            Some(i) => {
+                match _new_message.reply(_ctx.http, i).await {
+                    Ok(..) => {}
+                    Err(e) => println!("Error responding to message: {}", e),
+                };
+            }
+            _ => return,
+        },
+        _ => return,
+    };
 }

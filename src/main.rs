@@ -1,6 +1,5 @@
 mod commands;
 mod database;
-mod db;
 mod guild_config;
 mod responder;
 
@@ -48,7 +47,9 @@ async fn main() {
             commands: vec![
                 commands::age(),
                 commands::help(),
-                guild_config::set_chance(),
+                guild_config::chance(),
+                guild_config::add(),
+                guild_config::remove(),
             ],
             prefix_options: poise::PrefixFrameworkOptions {
                 prefix: Some(";".into()),
