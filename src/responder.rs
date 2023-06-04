@@ -17,13 +17,17 @@ pub async fn on_message(_ctx: Context, _new_message: Message) {
 
     let db = DbConn::new().await;
 
-    match should_send(&db, guild_id.into()).await {
-        Ok(s) => s,
+    let send = match should_send(&db, guild_id.into()).await {
+        Ok(send) => send,
         Err(e) => {
             println!("Error checking if should send response: {}", e);
             return;
         },
     };
+
+    if !send {
+        return;
+    }
 
     let image = db.get_random_image(guild_id.into()).await;
 
