@@ -4,3 +4,4 @@ pub mod prelude;
 
 pub mod guild_config;
 pub mod response_images;
+pub mod user_opt_out;

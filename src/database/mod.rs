@@ -1,10 +1,10 @@
 pub mod entities;
 
 use self::entities::*;
-use crate::database::entities::prelude::{GuildConfig, ResponseImages};
+use crate::database::entities::prelude::{GuildConfig, ResponseImages, UserOptOut};
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
-use sea_orm::sea_query::{OnConflict};
+use sea_orm::sea_query::OnConflict;
 use sea_orm::*;
 
 const DEFAULT_DATA_DIR: &str = "./data";
@@ -15,7 +15,7 @@ pub struct DbConn {
 
 impl DbConn {
     pub async fn new() -> Self {
-        let data_dir =  match std::env::var("DATA_DIR") {
+        let data_dir = match std::env::var("DATA_DIR") {
             Ok(dir) => dir,
             _ => DEFAULT_DATA_DIR.into(),
         };
@@ -96,5 +96,39 @@ impl DbConn {
             .await?;
 
         Ok(res.rows_affected)
+    }
+
+    pub async fn opt_out(&self, user: i64) -> Result<bool, DbErr> {
+        if self.get_opted_out(user).await? {
+            return Ok(false);
+        }
+
+        let user = user_opt_out::ActiveModel {
+            id: ActiveValue::Set(user),
+        };
+        user_opt_out::Entity::insert(user)
+            .on_conflict(
+                OnConflict::column(user_opt_out::Column::Id)
+                    .do_nothing()
+                    .to_owned(),
+            )
+            .exec(&self.client)
+            .await?;
+
+        Ok(true)
+    }
+
+    pub async fn opt_in(&self, user: i64) -> Result<u64, DbErr> {
+        let res = user_opt_out::Entity::delete_by_id(user)
+            .exec(&self.client)
+            .await?;
+
+        Ok(res.rows_affected)
+    }
+
+    pub async fn get_opted_out(&self, user: i64) -> Result<bool, DbErr> {
+        let current_opt_out = UserOptOut::find_by_id(user).one(&self.client).await?;
+
+        Ok(current_opt_out.is_some())
     }
 }

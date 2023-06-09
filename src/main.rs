@@ -1,6 +1,7 @@
 mod commands;
 mod database;
 mod guild_config;
+mod opt_out;
 mod responder;
 
 use poise::serenity_prelude::Message;
@@ -22,7 +23,9 @@ async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
         poise::FrameworkError::Setup { error, .. } => panic!("Failed to start bot: {:?}", error),
         poise::FrameworkError::Command { error, ctx } => {
             println!("Error in command `{}`: {:?}", ctx.command().name, error,);
-            let _ = ctx.say("Error running command. Why did you do that??").await;
+            let _ = ctx
+                .say("Error running command. Why did you do that??")
+                .await;
         }
         error => {
             if let Err(e) = poise::builtins::on_error(error).await {
@@ -51,6 +54,8 @@ async fn main() {
                 guild_config::chance(),
                 guild_config::add(),
                 guild_config::remove(),
+                opt_out::optout(),
+                opt_out::optin(),
             ],
             prefix_options: poise::PrefixFrameworkOptions {
                 prefix: Some(";".into()),

@@ -13,7 +13,8 @@ pub async fn chance(ctx: Context<'_>, chance: u32) -> Result<(), Error> {
     db.set_guild_chance(ctx.guild_id().unwrap().into(), chance)
         .await?;
 
-    ctx.say(format!("Response chance set to {}%", chance * 100.0)).await?;
+    ctx.say(format!("Response chance set to {}%", chance * 100.0))
+        .await?;
 
     Ok(())
 }

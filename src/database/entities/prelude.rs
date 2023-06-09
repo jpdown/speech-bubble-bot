@@ -2,3 +2,4 @@
 
 pub use super::guild_config::Entity as GuildConfig;
 pub use super::response_images::Entity as ResponseImages;
+pub use super::user_opt_out::Entity as UserOptOut;

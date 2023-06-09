@@ -1,7 +1,7 @@
+use crate::database::DbConn;
 use poise::serenity_prelude::{Context, Message};
 use rand::prelude::*;
 use sea_orm::DbErr;
-use crate::database::DbConn;
 
 pub async fn on_message(_ctx: Context, _new_message: Message) {
     if _new_message.author.bot {
@@ -17,12 +17,23 @@ pub async fn on_message(_ctx: Context, _new_message: Message) {
 
     let db = DbConn::new().await;
 
+    let opted_out = match db.get_opted_out(_new_message.author.id.into()).await {
+        Ok(opt_out) => opt_out,
+        Err(e) => {
+            println!("Error checking if user is opted out: {}", e);
+            return;
+        }
+    };
+    if opted_out {
+        return;
+    }
+
     let send = match should_send(&db, guild_id.into()).await {
         Ok(send) => send,
         Err(e) => {
             println!("Error checking if should send response: {}", e);
             return;
-        },
+        }
     };
 
     if !send {
