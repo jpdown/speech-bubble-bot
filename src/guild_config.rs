@@ -9,7 +9,7 @@ use crate::{Context, Error};
 pub async fn chance(ctx: Context<'_>, chance: f64) -> Result<(), Error> {
     let db = crate::database::DbConn::new().await;
 
-    db.set_guild_chance(ctx.guild_id().unwrap().into(), chance)
+    db.set_guild_chance(ctx.guild_id().unwrap().into(), chance / 100.0)
         .await?;
 
     ctx.say(format!("Response chance set to {}%", chance))
@@ -30,7 +30,7 @@ pub async fn getchance(ctx: Context<'_>) -> Result<(), Error> {
     let model = db.get_guild_config(ctx.guild_id().unwrap().into()).await?;
 
     let chance = match model {
-        Some(m) => m.response_chance,
+        Some(m) => m.response_chance * 100.0,
         _ => 0.0,
     };
 
