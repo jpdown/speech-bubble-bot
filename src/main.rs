@@ -49,7 +49,6 @@ async fn main() {
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
             commands: vec![
-                commands::age(),
                 commands::help(),
                 guild_config::chance(),
                 guild_config::add(),

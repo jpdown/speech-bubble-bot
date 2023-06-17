@@ -3,7 +3,7 @@ use crate::{Context, Error};
 #[poise::command(
     prefix_command,
     slash_command,
-    required_permissions = "MANAGE_GUILD",
+    required_permissions = "BAN_MEMBERS",
     guild_only = true
 )]
 pub async fn chance(ctx: Context<'_>, chance: u32) -> Result<(), Error> {
@@ -22,7 +22,7 @@ pub async fn chance(ctx: Context<'_>, chance: u32) -> Result<(), Error> {
 #[poise::command(
     prefix_command,
     slash_command,
-    required_permissions = "MANAGE_GUILD",
+    required_permissions = "BAN_MEMBERS",
     guild_only = true
 )]
 pub async fn add(ctx: Context<'_>, url: String) -> Result<(), Error> {
@@ -41,7 +41,7 @@ pub async fn add(ctx: Context<'_>, url: String) -> Result<(), Error> {
 #[poise::command(
     prefix_command,
     slash_command,
-    required_permissions = "MANAGE_GUILD",
+    required_permissions = "BAN_MEMBERS",
     guild_only = true
 )]
 pub async fn remove(ctx: Context<'_>, url: String) -> Result<(), Error> {
