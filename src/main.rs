@@ -51,6 +51,7 @@ async fn main() {
             commands: vec![
                 commands::help(),
                 guild_config::chance(),
+                guild_config::getchance(),
                 guild_config::add(),
                 guild_config::remove(),
                 opt_out::optout(),
