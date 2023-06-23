@@ -1,3 +1,4 @@
+use serenity::builder::CreateEmbed;
 use crate::{Context, Error};
 
 #[poise::command(
@@ -73,6 +74,44 @@ pub async fn remove(ctx: Context<'_>, url: String) -> Result<(), Error> {
     } else {
         ctx.say("url does not exist").await?;
     }
+
+    Ok(())
+}
+
+#[poise::command(
+prefix_command,
+slash_command,
+required_permissions = "BAN_MEMBERS",
+guild_only = true
+)]
+pub async fn responses(ctx: Context<'_>) -> Result<(), Error> {
+    let db = crate::database::DbConn::new().await;
+    let images = db.get_all_images(ctx.guild_id().unwrap().into()).await?;
+
+    let left_id = format!("{}_prev", ctx.id());
+    let right_id = format!("{}_next", ctx.id());
+
+    let pages: Vec<CreateEmbed> = images.chunks(4).map(|c| {
+        let embed = CreateEmbed::default()
+            .title("Response Images")
+            .colour((0xc3, 0x80, 0xff));
+
+        for img in c {
+            embed.image(img);
+        }
+
+        return embed.to_owned();
+    }).collect();
+
+    let message = ctx.send(|m| {
+        m.components(|c| {
+            c.create_action_row(|r| {
+                r.create_button(|b| b.custom_id(&left_id).emoji('◀'))
+                    .create_button(|b| b.custom_id(&right_id).emoji('▶'))
+            })
+        }).reply(true)
+            .ephemeral(true)
+    });
 
     Ok(())
 }
