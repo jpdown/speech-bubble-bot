@@ -61,15 +61,11 @@ impl DbConn {
     }
 
     pub async fn get_random_image(&self, guild: i64) -> Result<Option<String>, DbErr> {
-        let images = ResponseImages::find()
-            .filter(response_images::Column::GuildId.eq(guild))
-            .all(&self.client)
-            .await?;
+        let images = self.get_all_images(guild).await?;
 
         let chosen = images.choose(&mut thread_rng());
-
         match chosen {
-            Some(img) => Ok(Some(img.url.clone())),
+            Some(img) => Ok(Some(img.clone())),
             _ => Ok(None),
         }
     }
