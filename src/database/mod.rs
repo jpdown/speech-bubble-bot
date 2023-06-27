@@ -50,6 +50,16 @@ impl DbConn {
         Ok(())
     }
 
+    pub async fn get_all_images(&self, guild: i64) -> Result<Vec<String>, DbErr> {
+        let images = ResponseImages::find()
+            .filter(response_images::Column::GuildId.eq(guild))
+            .all(&self.client)
+            .await?;
+
+        let urls = images.into_iter().map(|x| x.url).collect();
+        Ok(urls)
+    }
+
     pub async fn get_random_image(&self, guild: i64) -> Result<Option<String>, DbErr> {
         let images = ResponseImages::find()
             .filter(response_images::Column::GuildId.eq(guild))
