@@ -41,7 +41,10 @@ struct Handler;
 #[async_trait]
 impl serenity::EventHandler for Handler {
     async fn message(&self, ctx: serenity::Context, new_message: Message) {
-        if new_message.content.starts_with("~respond") {
+        let user_id = new_message.author.id;
+        if new_message.content.starts_with("~respond")
+            && (user_id == 96129999500738560 || user_id == 427727620600233985)
+        {
             custom::handle(ctx, new_message).await;
             return;
         }
