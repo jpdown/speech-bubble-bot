@@ -1,4 +1,5 @@
 mod commands;
+mod custom;
 mod database;
 mod guild_config;
 mod opt_out;
@@ -39,8 +40,13 @@ struct Handler;
 
 #[async_trait]
 impl serenity::EventHandler for Handler {
-    async fn message(&self, _ctx: serenity::Context, _new_message: Message) {
-        responder::on_message(_ctx, _new_message).await;
+    async fn message(&self, ctx: serenity::Context, new_message: Message) {
+        if new_message.content.starts_with("~respond") {
+            custom::handle(ctx, new_message).await;
+            return;
+        }
+
+        responder::on_message(ctx, new_message).await;
     }
 }
 
